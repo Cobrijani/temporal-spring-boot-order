@@ -1,0 +1,51 @@
+version: "3.7"
+
+services:
+  postgres:
+    image: postgres:13
+    container_name: temporal_postgres
+    environment:
+      POSTGRES_USER: temporal
+      POSTGRES_PASSWORD: temporal
+      POSTGRES_DB: temporal
+    ports:
+      - "5432:5432"
+    networks:
+      - temporal-network
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  temporal:
+    image: temporalio/auto-setup:1.24.0
+    container_name: temporal
+    environment:
+      DB: postgres12
+      DB_PORT: 5432
+      POSTGRES_USER: temporal
+      POSTGRES_PWD: temporal
+      DBNAME: temporal
+      POSTGRES_SEEDS: postgres
+      LOG_LEVEL: info
+    ports:
+      - "7233:7233"   # gRPC API
+      - "8233:8233"   # Temporal Web UI
+    depends_on:
+      - postgres
+    networks:
+      - temporal-network
+  temporal-ui:
+    image: temporalio/ui
+    environment:
+      - TEMPORAL_ADDRESS=temporal:7233
+    ports:
+      - "8080:8080"
+    depends_on:
+      - temporal
+    networks:
+      - temporal-network
+
+networks:
+  temporal-network:
+
+volumes:
+  pgdata:

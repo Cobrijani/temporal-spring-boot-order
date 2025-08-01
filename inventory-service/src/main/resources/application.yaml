@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: inventory-service
+  temporal:
+    namespace: default
+    connection:
+      target: 127.0.0.1:7233
+    workersAutoDiscovery:
+      packages: com.github.cobrijani.inventoryservice
+server:
+  port: 8082

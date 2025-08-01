@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: order-service
+  temporal:
+    namespace: default
+    connection:
+      target: 127.0.0.1:7233
+    workersAutoDiscovery:
+      packages: com.github.cobrijani
+    #    start-workers: true
+    workers:
+      - task-queue: ORDER_TASK_QUEUE
+        capacity:
+          max-concurrent-workflow-task-pollers: 6
+          max-concurrent-activity-task-pollers: 6
+        rate-limits:
+          max-worker-activities-per-second: 3
+          max-task-queue-activities-per-second: 3
+    workflow-cache:
+      max-instances: 10
+      max-threads: 10
+server:
+  port: 8081
